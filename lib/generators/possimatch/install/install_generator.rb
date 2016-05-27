@@ -1,4 +1,4 @@
-require 'rails/generators/active_record'
+require 'rails/generators/migration'
 
 module Possimatch
   module Generators
@@ -6,7 +6,7 @@ module Possimatch
       include Rails::Generators::Migration
       source_root File.expand_path("../templates", __FILE__)
 
-      desc 'Create possimatch initializer'
+      desc 'Add possimatch migrations'
 
       def copy_migrations
         migration_template '../templates/migrations/create_possible_sources.rb', 'db/migrate/create_possible_sources.rb'
