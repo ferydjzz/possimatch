@@ -1,6 +1,6 @@
 module Possimatch
   module Generators
-    class InstallGenerator < ActiveRecord::Generators::Base
+    class InstallGenerator < Rails::Generators::Migration
       include Rails::Generators::Migration
       
       source_root File.expand_path("../templates", __FILE__)
