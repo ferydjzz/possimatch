@@ -9,7 +9,7 @@ class CreatePossiRules < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :possi_rules, [:company_id, :possi_source_id]
+    add_index :possi_rules, [:possi_source_id]
   end
 
   def self.down
