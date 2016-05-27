@@ -1,8 +1,8 @@
+require 'rails/generators/base'
+
 module Possimatch
   module Generators
-    class InstallGenerator < Rails::Generators::Migration
-      include Rails::Generators::Migration
-      
+    class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path("../templates", __FILE__)
 
       desc "create Possimatch migrations"
