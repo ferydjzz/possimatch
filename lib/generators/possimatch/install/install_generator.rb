@@ -1,8 +1,8 @@
-require 'rails/generators/active_record'
-
 module Possimatch
   module Generators
     class InstallGenerator < ActiveRecord::Generators::Base
+      include Rails::Generators::Migration
+      
       source_root File.expand_path("../templates", __FILE__)
 
       desc "create Possimatch migrations"
@@ -17,8 +17,6 @@ module Possimatch
       end
 
       def create_migrations
-        desc "copy migrations"
-        
         migration_template 'migrations/create_possi_sources.rb', 'db/migrate/create_possi_sources.rb'
         migration_template 'migrations/create_possi_rules.rb', 'db/migrate/create_possi_rules.rb'
         migration_template 'migrations/create_possi_matches.rb', 'db/migrate/create_possi_matches.rb'
