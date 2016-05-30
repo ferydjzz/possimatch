@@ -1,0 +1,18 @@
+Possimatch.setup do |config|
+  # == Number of possible matches (nopm)
+  #
+  # Set the number of possible matches 
+  # by default system will get top 3 matches
+  #
+  config.possible_matches = 3
+
+  # == Stop after 1 100% match
+  # 
+  # You can set it to true if you want to stop matching immediately
+  # after getting 1 match (to improve performance).
+  # The default value will be false, it will check all data 
+  # and will choose top 3 (nopm).
+  #
+  config.stop_after_match = false
+
+end

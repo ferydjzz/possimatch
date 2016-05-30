@@ -7,7 +7,11 @@ module Possimatch
 
       source_root File.expand_path("../templates", __FILE__)
 
-      desc "create Possimatch migrations"
+      desc "Install Possimatch and generates migrations"
+
+      def copy_initializer
+        template 'possimatch.rb.erb', 'config/initializers/possimatch.rb'
+      end
 
       def self.next_migration_number(path)
         unless @prev_migration_nr
