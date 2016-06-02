@@ -1,11 +1,16 @@
 module Possimatch
   module Configuration
+    # == default value for confirguration
+    define_setting :possible_matches, 3
+    define_setting :stop_after_match, false
+    
     def configuration
       yield self
     end
 
     def define_setting(name, default=nil)
       class_variable_set("@@#{name}", default)
+      
       define_class_method "#{name}=" do |value|
         class_variable_set("@@#{name}", value)
       end
