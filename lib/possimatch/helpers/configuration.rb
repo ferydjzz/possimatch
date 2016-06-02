@@ -1,6 +1,6 @@
 module Possimatch
-  module Confirguration
-    def confirguration
+  module Configuration
+    def configuration
       yield self
     end
 
