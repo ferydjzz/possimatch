@@ -10,7 +10,7 @@ module Possimatch
 
       source_root File.expand_path("../templates", __FILE__)
 
-      argument :attributes, :type => :array, :default => []
+      argument :attributes, :type => :array, :default => [], :banner => "from_class[:class] to_class[:class] group_key[:field]"
 
       puts attributes
       Rails.logger.info "attributes.each{ |a| a }"
