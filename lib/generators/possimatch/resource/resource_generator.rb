@@ -1,4 +1,4 @@
-require 'active_admin/generators/boilerplate'
+require 'generators/possimatch/boilerplate'
 
 module Possimatch
   module Generators
