@@ -1,7 +1,7 @@
 class CreatePossiRules < ActiveRecord::Migration
   def self.up
     create_table :possi_rules do |t|
-      t.integer  :possi_source_id
+      t.integer  :possi_resource_id
       t.string   :from_source_field
       t.string   :to_source_field
       t.string   :data_type
@@ -9,7 +9,7 @@ class CreatePossiRules < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :possi_rules, [:possi_source_id]
+    add_index :possi_rules, [:possi_resource_id]
   end
 
   def self.down
