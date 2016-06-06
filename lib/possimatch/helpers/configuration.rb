@@ -1,9 +1,5 @@
 module Possimatch
   module Configuration
-    # == default value for confirguration
-    define_setting :possible_matches, 3
-    define_setting :stop_after_match, false
-    
     def configuration
       yield self
     end
