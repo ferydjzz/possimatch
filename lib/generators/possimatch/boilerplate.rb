@@ -6,7 +6,8 @@ module Possimatch
         @resource_class = resource_class
         @from_class     = from_class
         @to_class       = to_class
-        @group_key      = group_key 
+        @group_key      = group_key
+        @class_name     = get_class_name
       end
 
       def get_class_name
