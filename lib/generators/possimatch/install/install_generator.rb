@@ -23,7 +23,7 @@ module Possimatch
       end
 
       def create_migrations
-        migration_template 'migrations/create_possi_sources.rb', 'db/migrate/create_possi_sources.rb'
+        migration_template 'migrations/create_possi_resources.rb', 'db/migrate/create_possi_resources.rb'
         migration_template 'migrations/create_possi_rules.rb', 'db/migrate/create_possi_rules.rb'
         migration_template 'migrations/create_possi_matches.rb', 'db/migrate/create_possi_matches.rb'
       end

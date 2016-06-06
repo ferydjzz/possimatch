@@ -2,10 +2,15 @@ require "possimatch/version"
 require "possimatch/helpers/configuration"
 
 module Possimatch
+  class << self
+    def register_resource(resource_id, from_source, to_source, group_key)
+      params = {resource_id: resource_id, from_source: from_source, to_source: to_source, group_key: group_key}
+      pr = PossiResource.register(params)
+      pr
+    end
 
-  # for reading config file in initializer
-  extend Configuration
-  define_setting :possible_matches, 3
-  define_setting :stop_after_match, false
+    def show_resources
+    end
+  end
 
 end
