@@ -15,11 +15,6 @@ module Possimatch
       argument :group_key, :type => :string
 
       def generate_config_file
-        puts "from_class #{from_class}"
-        puts "to_class #{to_class}"
-        puts "group_key #{group_key}"
-        # puts "#{attributes.each{ |a| [a.name] }}"
-        # puts "from_class: #{from_class}, to_class: #{to_class}, group_key: #{group_key}"
         @boilerplate = Possimatch::Generators::Boilerplate.new(name, from_class, to_class, group_key)
         template "possi_resource.rb", "app/models/possimatches/#{@boilerplate.get_file_name}.rb"
       end
