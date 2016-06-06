@@ -13,8 +13,8 @@ module Possimatch
       argument :attributes, :type => :array, :default => [], :banner => "from_class[:class] to_class[:class] group_key[:field]"
 
       def generate_config_file
-        puts attributes
-        Rails.logger.info "attributes.each{ |a| a }"
+        puts "attributes.each{ |a| [a.name] }"
+        puts "attributes.each{ |a| [a.attr_options[:from_class], a.attr_options[:to_class], a.attr_options[:group_key]] }"
         @boilerplate = Possimatch::Generators::Boilerplate.new(source_class, from_class, to_class, group_key)
         template "possi_resource.rb", "app/models/possimatches/#{file_path.tr('/', '_')}.rb"
       end
