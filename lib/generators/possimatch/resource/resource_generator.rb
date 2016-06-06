@@ -20,8 +20,8 @@ module Possimatch
         puts "group_key #{group_key}"
         # puts "#{attributes.each{ |a| [a.name] }}"
         # puts "from_class: #{from_class}, to_class: #{to_class}, group_key: #{group_key}"
-        # @boilerplate = Possimatch::Generators::Boilerplate.new(class_name, from_class, to_class, group_key)
-        # template "possi_resource.rb", "app/models/possimatches/#{file_path.tr('/', '_')}.rb"
+        @boilerplate = Possimatch::Generators::Boilerplate.new(name, from_class, to_class, group_key)
+        template "possi_resource.rb", "app/models/possimatches/#{@boilerplate.get_file_name}.rb"
       end
     end
   end

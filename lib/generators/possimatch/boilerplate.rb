@@ -10,7 +10,11 @@ module Possimatch
       end
 
       def get_class_name
-        "Possi#{@resource_class}"
+        "possi_#{@resource_class}".classify
+      end
+
+      def get_file_name
+        get_class_name.tableize.singularize
       end
     end
   end
