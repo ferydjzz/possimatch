@@ -11,7 +11,7 @@ module Possimatch
       argument :to_class, :type => :string
       argument :group_key, :type => :string
 
-      def generate_config_file
+      def generate_possi_model
         @boilerplate = Possimatch::Generators::Boilerplate.new(resource_class, from_class, to_class, group_key)
         template "possi_resource.rb", "app/models/possimatches/#{@boilerplate.get_file_name}.rb"
       end
