@@ -12,7 +12,7 @@ module Possimatch
       argument :group_key, :type => :string
 
       def generate_possi_model
-        @boilerplate = Possimatch::Generators::Boilerplate.new(resource_class, from_class, to_class, group_key)
+        @boilerplate = Possimatch::Generators::Boilerplate.new(class_name, from_class, to_class, group_key)
         template "possi_resource.rb", "app/models/possimatches/#{@boilerplate.get_file_name}"
       end
     end
