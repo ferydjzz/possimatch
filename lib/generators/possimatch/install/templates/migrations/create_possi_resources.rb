@@ -7,8 +7,6 @@ class CreatePossiResources < ActiveRecord::Migration
       t.string   :group_key
       t.timestamps null: false
     end
-
-    add_index :possi_resources, [:source_id, :group_key] 
   end
 
   def self.down
