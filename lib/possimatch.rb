@@ -1,8 +1,8 @@
 require "possimatch/version"
 require "possimatch/helpers/configuration"
-require "/possimatch/app/models/possi_resource"
-require "/possimatch/app/models/possi_rule"
-require "/possimatch/app/models/possi_match"
+require "possimatch/app/models/possi_resource"
+require "possimatch/app/models/possi_rule"
+require "possimatch/app/models/possi_match"
 
 module Possimatch
   
