@@ -6,7 +6,7 @@ class CreatePossiMatches < ActiveRecord::Migration
       t.decimal  :score
       t.timestamps
     end
-    add_index :possi_matches, [:from_source_id, :to_source_id]
+    add_index :possi_matches, [:from_source_id, :to_source_id, :score], order: {from_source_id: :asc, to_source_id: :asc, score: :desc}
   end
 
   def self.down

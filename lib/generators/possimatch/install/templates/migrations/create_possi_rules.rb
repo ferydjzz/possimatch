@@ -8,8 +8,6 @@ class CreatePossiRules < ActiveRecord::Migration
       t.decimal  :margin
       t.timestamps
     end
-
-    add_index :possi_rules, [:possi_resource_id]
   end
 
   def self.down
