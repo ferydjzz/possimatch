@@ -15,7 +15,7 @@ module Possimatch
       end
 
       def get_file_name
-        get_class_name.tableize.singularize
+        @class_name.tableize.singularize
       end
     end
   end
