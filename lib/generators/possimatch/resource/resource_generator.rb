@@ -13,7 +13,7 @@ module Possimatch
 
       def generate_possi_model
         @boilerplate = Possimatch::Generators::Boilerplate.new(class_name, from_class, to_class, group_key)
-        template "possi_resource.rb", "app/models/possimatches/#{@boilerplate.get_file_name}"
+        template "possi_resource.rb", "app/models/#{@boilerplate.get_file_name}"
       end
     end
   end
