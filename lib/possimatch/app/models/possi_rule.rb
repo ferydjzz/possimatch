@@ -1,5 +1,3 @@
-require 'active_record'
-
 module Possimatch
   class PossiRule < ::ActiveRecord::Base
     validates_presence_of :from_source_field

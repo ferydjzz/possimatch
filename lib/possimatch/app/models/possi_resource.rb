@@ -1,5 +1,3 @@
-require 'active_record'
-
 module Possimatch
   class PossiResource < ::ActiveRecord::Base
     validates_presence_of :source_id

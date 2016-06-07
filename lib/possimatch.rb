@@ -1,3 +1,4 @@
+require 'active_record'
 require "possimatch/version"
 require "possimatch/helpers/configuration"
 require "possimatch/app/models/possi_resource.rb"
