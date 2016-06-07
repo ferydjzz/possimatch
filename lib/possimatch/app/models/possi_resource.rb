@@ -7,9 +7,32 @@ module Possimatch
 
     has_many :possi_rules
 
-    def build_matcher
-      query = "SELECT * FROM transactions 
-                  LIMIT 1"
+    def self.register_existing_data
+      puts "#{self.source_class}"
+      # query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) VALUES (),()"
+      # ActiveRecord::Base.connection.execute(query)
+    end
+
+    def register
+      # query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) 
+      #           VALUES (#{self.source_id}, self.#{from_source})"
+      # ActiveRecord::Base.connection.execute(query)
+    end
+
+    def self.source_class
+      raise NotImplementedError
+    end
+
+    def self.from_class
+      raise NotImplementedError
+    end
+
+    def self.to_class
+      raise NotImplementedError
+    end  
+
+    def self.group_key
+      raise NotImplementedError
     end
   end
 end
