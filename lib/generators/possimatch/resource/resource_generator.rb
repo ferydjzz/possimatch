@@ -15,12 +15,6 @@ module Possimatch
         @boilerplate = Possimatch::Generators::Boilerplate.new(class_name, from_class, to_class, group_key)
         template "possi_resource.rb", "app/models/#{@boilerplate.get_file_name}"
       end
-
-      def create_possi_resource_data
-        query = "SELECT * from #{class_name.tableize} LIMIT 1"
-        puts query
-        ActiveRecord::Base.connection.execute(query)
-      end
     end
   end
 end
