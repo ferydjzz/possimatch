@@ -1,4 +1,3 @@
-require "rails"
 require "possimatch/version"
 require "possimatch/helpers/configuration"
 require "possimatch/app/models/possi_resource.rb"
@@ -14,6 +13,7 @@ module Possimatch
 
   class << self
     def show_resources
+      puts "#{PossiMatch.new}"
     end
   end
 
