@@ -5,9 +5,6 @@ module Possimatch
     class ResourceGenerator < Rails::Generators::NamedBase
       desc "Registers resources with Possimatch"
 
-      class_option :include_boilerplate, type: :boolean, default: true,
-        desc: "Generate boilerplate code for your resource."
-
       source_root File.expand_path("../templates", __FILE__)
 
       argument :from_class, :type => :string
@@ -15,7 +12,7 @@ module Possimatch
       argument :group_key, :type => :string
 
       def generate_config_file
-        @boilerplate = Possimatch::Generators::Boilerplate.new(name, from_class, to_class, group_key)
+        @boilerplate = Possimatch::Generators::Boilerplate.new(resource_class, from_class, to_class, group_key)
         template "possi_resource.rb", "app/models/possimatches/#{@boilerplate.get_file_name}.rb"
       end
     end
