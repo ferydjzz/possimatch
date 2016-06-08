@@ -40,7 +40,7 @@ module Possimatch
     # ============= Private ============= #
     private 
 
-    def check_data_validation
+    def self.check_data_validation
       check_class_exist(self.source_class)
       check_class_exist(self.from_class)
       check_class_exist(self.to_class)
@@ -48,13 +48,13 @@ module Possimatch
       check_field(self.group_key)
     end
 
-    def check_class_exist(class_name)
+    def self.check_class_exist(class_name)
       if defined?(Company).nil?
         raise NameError.new("Class #{class_name} doesn't exists.")
       end
     end
 
-    def check_field(field_name)
+    def self.check_field(field_name)
       error_data = []
       if self.from_class.column_names.exclude? "#{field_name}" 
         error_data << self.from_class
