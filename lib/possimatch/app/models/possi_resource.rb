@@ -52,6 +52,7 @@ module Possimatch
       if defined?(Company).nil?
         raise NameError.new("Class #{class_name} doesn't exists.")
       end
+      true
     end
 
     def self.check_field(field_name)
@@ -67,6 +68,7 @@ module Possimatch
       if error_data.present?
         raise NameError.new("field #{field_name} doesn't exists in #{error_data.join(' and ')}.")
       end
+      true
     end
   end
 end
