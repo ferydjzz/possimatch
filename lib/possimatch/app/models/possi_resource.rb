@@ -7,18 +7,30 @@ module Possimatch
 
     has_many :possi_rules
 
-    def self.register_existing_data
+    def self.create_default_resource
       check_data_validation
 
-      # query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) VALUES (),()"
-      # ActiveRecord::Base.connection.execute(query)
+      # check_field(from_field, self.from_class)
+      # check_field(to_field, self.to_class)
+
+      data = self.source_class.pluck(:id).map{|a|[a, self.from_class.to_s, self.to_class.to_s, self.group_key.to_s]}
+      query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) VALUES "
+      values = ""
+      data.each do |d|
+        if values.blank?
+          values += "('#{d.join("', '")}') "
+        else
+          values += ",('#{d.join("', '")}') "
+        end
+      end
+      query = "#{query} #{values}"
+      ActiveRecord::Base.connection.execute(query)
     end
 
-    def register
+    def register(source_id)
       check_data_validation
-      # query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) 
-      #           VALUES (#{self.source_id}, self.#{from_source})"
-      # ActiveRecord::Base.connection.execute(query)
+      query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) VALUES (#{source_id}, '#{self.from_class.to_s}', '#{self.to_class.to_s}', '#{self.group_key.to_s}')"
+      ActiveRecord::Base.connection.execute(query)
     end
 
     def self.source_class
@@ -55,14 +67,18 @@ module Possimatch
       true
     end
 
-    def self.check_field(field_name)
+    def self.check_field(field_name, class_name=nil)
       error_data = []
-      if self.from_class.column_names.exclude? "#{field_name}" 
-        error_data << self.from_class
-      end
+      if class_name.nil?
+        if self.from_class.column_names.exclude? "#{field_name}" 
+          error_data << self.from_class
+        end
 
-      if self.to_class.column_names.exclude? "#{field_name}"
-        error_data << self.from_class
+        if self.to_class.column_names.exclude? "#{field_name}"
+          error_data << self.from_class
+        end
+      elsif class_name.column_names.exclude? "#{field_name}"
+        error_data << class_name
       end
 
       if error_data.present?
