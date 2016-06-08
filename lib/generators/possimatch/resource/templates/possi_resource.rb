@@ -14,6 +14,6 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
   end  
 
   def self.group_key
-    <%= @group_key.to_s %>
+    "<%= @group_key.to_s %>"
   end
 end
