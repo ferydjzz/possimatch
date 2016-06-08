@@ -14,7 +14,6 @@ module Possimatch
 
   class << self
     def show_resources
-      puts "#{PossiMatch.new}"
     end
   end
 
