@@ -16,7 +16,7 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
 # after_create :create_possi_rules
 # 
 # def create_possi_rules
-#   self.create_rule('<field in <%= @from_class.tableize %>>', '<field in <%= @to_class.tableize %>>', '<data type for checking field (date/decimal/percent)>', <error margin (number)>)
+#   create_rule('<field in <%= @from_class.tableize %>>', '<field in <%= @to_class.tableize %>>', '<data type for checking field (date/decimal/percent)>', <error margin (number)>)
 # end
 #
 
