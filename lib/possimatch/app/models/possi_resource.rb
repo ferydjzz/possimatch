@@ -80,9 +80,9 @@ module Possimatch
     private 
 
     def sanitize_parameters
-      self.from_source ||= self.from_class.to_s
-      self.to_source ||= self.to_class.to_s
-      self.group_key ||= self.group_key.to_s
+      self.from_source ||= self.class.from_class.to_s
+      self.to_source ||= self.class.to_class.to_s
+      self.group_key ||= self.class.group_key.to_s
     end
 
     def self.check_data_validation
