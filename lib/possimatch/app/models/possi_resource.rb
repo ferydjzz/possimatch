@@ -12,8 +12,8 @@ module Possimatch
     def self.create_default_resource
       check_data_validation
 
-      data = self.source_class.pluck(:id).map{|a|[a, self.from_class.to_s, self.to_class.to_s, self.group_key.to_s]}
-      query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) VALUES "
+      data = self.source_class.pluck(:id).map{|a|[a, self.from_class.to_s, self.to_class.to_s, self.group_key.to_s, Time.now, Time.now]}
+      query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key, created_at, updated_at) VALUES "
       values = ""
 
       data.each do |d|
@@ -32,8 +32,8 @@ module Possimatch
       check_field(from_source_field, self.from_class)
       check_field(to_source_field, self.to_class)
 
-      data = self.pluck(:id).map{|a|[a, from_source_field, to_source_field, data_type, margin]}
-      query = "INSERT INTO possi_rules (possi_resource_id, from_source_field, to_source_field, data_type, margin) VALUES "
+      data = self.pluck(:id).map{|a|[a, from_source_field, to_source_field, data_type, margin, Time.now, Time.now]}
+      query = "INSERT INTO possi_rules (possi_resource_id, from_source_field, to_source_field, data_type, margin, created_at, updated_at) VALUES "
       values = ""
 
       data.each do |d|
