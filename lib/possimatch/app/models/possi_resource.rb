@@ -49,8 +49,8 @@ module Possimatch
     end
 
     def create_rule(from_source_field, to_source_field, data_type, margin)
-      check_field(from_source_field, self.class.from_class)
-      check_field(to_source_field, self.class.to_class)
+      self.class.check_field(from_source_field, self.class.from_class)
+      self.class.check_field(to_source_field, self.class.to_class)
 
       pr = PossiRule.new(possi_resource_id: self.id, from_source_field: from_source_field, to_source_field: to_source_field, data_type: data_type, margin: margin)
       if pr.valid?
