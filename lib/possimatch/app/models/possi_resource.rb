@@ -7,30 +7,57 @@ module Possimatch
 
     has_many :possi_rules
 
+    before_validation :sanitize_parameters
+
     def self.create_default_resource
       check_data_validation
-
-      # check_field(from_field, self.from_class)
-      # check_field(to_field, self.to_class)
 
       data = self.source_class.pluck(:id).map{|a|[a, self.from_class.to_s, self.to_class.to_s, self.group_key.to_s]}
       query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) VALUES "
       values = ""
+
       data.each do |d|
         if values.blank?
-          values += "('#{d.join("', '")}') "
+          values += " ('#{d.join("', '")}')"
         else
-          values += ",('#{d.join("', '")}') "
+          values += ", ('#{d.join("', '")}')"
         end
       end
+
       query = "#{query} #{values}"
       ActiveRecord::Base.connection.execute(query)
     end
 
-    def register(source_id)
-      check_data_validation
-      query = "INSERT INTO possi_resources (source_id, from_source, to_source, group_key) VALUES (#{source_id}, '#{self.from_class.to_s}', '#{self.to_class.to_s}', '#{self.group_key.to_s}')"
+    def self.create_default_rule(from_source_field, to_source_field, data_type, margin)
+      check_field(from_source_field, self.from_class)
+      check_field(to_source_field, self.to_class)
+
+      data = self.pluck(:id).map{|a|[a, from_source_field, to_source_field, data_type, margin]}
+      query = "INSERT INTO possi_rules (possi_resource_id, from_source_field, to_source_field, data_type, margin) VALUES "
+      values = ""
+
+      data.each do |d|
+        if values.blank?
+          values += " ('#{d.join("', '")}')"
+        else
+          values += ", ('#{d.join("', '")}')"
+        end
+      end
+
+      query = "#{query} #{values}"
       ActiveRecord::Base.connection.execute(query)
+    end
+
+    def create_rule(from_source_field, to_source_field, data_type, margin)
+      check_field(from_source_field, self.from_class)
+      check_field(to_source_field, self.to_class)
+
+      pr = PossiRule.new(possi_resource_id: self.id, from_source_field: from_source_field, to_source_field: to_source_field, data_type: data_type, margin: margin)
+      if pr.valid?
+        pr.save!
+      else
+        pr.errors.full_messages
+      end
     end
 
     def self.source_class
@@ -51,6 +78,12 @@ module Possimatch
 
     # ============= Private ============= #
     private 
+
+    def sanitize_parameters
+      self.from_source ||= self.from_class.to_s
+      self.to_source ||= self.to_class.to_s
+      self.group_key ||= self.group_key.to_s
+    end
 
     def self.check_data_validation
       check_class_exist(self.source_class)
