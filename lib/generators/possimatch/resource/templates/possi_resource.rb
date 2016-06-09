@@ -13,13 +13,10 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
 # == automatic create default rules when resource created
 # callback to create default rules
 #
-# after_create :create_default_rules
+# after_create :create_possi_rules
 # 
-# def create_default_rules
-#   self.possi_rules.create(from_source_field: '<field in <%= @from_class.tableize %>>', 
-#                           to_source_field: '<field in <%= @to_class.tableize %>>',
-#                           data_type: '<data type for checking field (date/decimal/percent)>',
-#                           margin: <error margin (number)>)
+# def create_possi_rules
+#   self.create_rule('<field in <%= @from_class.tableize %>>', '<field in <%= @to_class.tableize %>>', '<data type for checking field (date/decimal/percent)>', <error margin (number)>)
 # end
 #
 
