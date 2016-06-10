@@ -10,7 +10,7 @@ module Possimatch
       desc "Install Possimatch and generates migrations"
 
       def copy_initializer
-        template 'possimatch.rb.erb', 'config/initializers/possimatch.rb'
+        template 'initializers/possimatch.rb.erb', 'config/initializers/possimatch.rb'
       end
 
       def self.next_migration_number(path)
@@ -26,6 +26,8 @@ module Possimatch
         migration_template 'migrations/create_possi_resources.rb', 'db/migrate/create_possi_resources.rb'
         migration_template 'migrations/create_possi_rules.rb', 'db/migrate/create_possi_rules.rb'
         migration_template 'migrations/create_possi_matches.rb', 'db/migrate/create_possi_matches.rb'
+
+        template "models/possi_match.rb", "app/models/possi_match.rb"
       end
     end
   end
