@@ -3,15 +3,19 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
 
 # == automatic create resource when new <%= "#{class_name.tableize.singularize}" %> created
 # add this callback and function to class <%= "#{class_name.classify}" %>
-# 
+# and don't forget to add relationship.
+#
 # after_create :create_possisource
 #
 # def create_possisource
 #   <%= @boilerplate.get_class_name %>.create(source_id: self.id)
 # end
 #
+# has_one :<%= "#{@boilerplate.get_file_name}" %>, foreign_key: 'source_id'
+#
 # == automatic create default rules when resource created
-# callback to create default rules
+# callback to create default rules, You can create multiple rules by
+# multiplying create_rule function
 #
 # after_create :create_possi_rules
 # 
@@ -32,6 +36,10 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
     <%= @to_class.classify %>
   end  
 
+  def self.group_class
+    <%= @group_key.split('_id').first.classify %>
+  end
+  
   def self.group_key
     "<%= @group_key.to_s %>"
   end
