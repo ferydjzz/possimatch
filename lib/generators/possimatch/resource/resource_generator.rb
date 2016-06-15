@@ -14,6 +14,7 @@ module Possimatch
       def generate_possi_model
         @boilerplate = Possimatch::Generators::Boilerplate.new(class_name, from_class, to_class, group_key)
         template "models/possi_resource.rb", "app/models/#{@boilerplate.get_file_name}"
+        template "models/possi_match.rb", "app/models/possi_match.rb"
       end
     end
   end
