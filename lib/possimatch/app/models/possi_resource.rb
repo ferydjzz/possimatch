@@ -9,12 +9,9 @@ module Possimatch
 
     before_validation :sanitize_parameters
 
-    def self.start_matching
-    end
-
-    def start_matching
-      query = "select to_source.id,
-                    from_source.id, "
+    def get_all_matches_data
+      query = "select from_source.id as from_source_id, 
+                      to_source.id   as to_source_id, "
       rule_cond = ""
       rule_fields = "" 
       rule_fields_cond = ""
@@ -67,7 +64,8 @@ module Possimatch
               where gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} and "
       from_cond += rule_fields_cond
       
-      query = "#{query} #{from_cond}"
+      order_cond = " order_by (from_source_id, to_source_id, score DESC)"
+      query = "#{query} #{from_cond} #{order_cond}"
       ActiveRecord::Base.connection.execute(query)
     end
 
