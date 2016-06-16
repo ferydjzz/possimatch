@@ -13,7 +13,19 @@ module Possimatch
   define_setting :stop_after_match, false
 
   class << self
-    def show_resources
+    def self.create_default_resource
+      PossiResource.descendants.each do |resource|
+        resource.create_default_resource
+      end
+    end
+
+    def self.start_matching
+      PossiResource.descendants.each do |resources|
+        resources.each do |resource|
+          result = resource.get_all_matches_data
+          result.group_by{ |a| a["from_source_id"] }
+        end 
+      end
     end
   end
 
