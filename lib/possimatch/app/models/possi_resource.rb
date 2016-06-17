@@ -10,63 +10,67 @@ module Possimatch
     before_validation :sanitize_parameters
 
     def get_all_matches_data
-      query = "select from_source.id as from_source_id, 
-                      to_source.id   as to_source_id, "
-      rule_cond = ""
-      rule_fields = "" 
-      rule_fields_cond = ""
+      if self.possi_rules.present?
+        query = "select from_source.id as from_source_id, 
+                        to_source.id   as to_source_id, "
+        rule_cond = ""
+        rule_fields = "" 
+        rule_fields_cond = ""
 
-      self.possi_rules.each_with_index do |rule, idx|
-        rule_cond += " if(from_source.#{rule.from_source_field} = to_source.#{rule.to_source_field}
-                        , 100/#{possi_rules.length}"
+        self.possi_rules.each_with_index do |rule, idx|
+          rule_cond += " if(from_source.#{rule.from_source_field} = to_source.#{rule.to_source_field}
+                          , 100/#{possi_rules.length}"
 
-        if rule.margin == 0
-          rule_cond += ", 0) "
-        elsif rule.data_type == "date"
-          rule_cond += ", 100/#{possi_rules.length} * (IF(DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} < 0
-                                                      , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} * -1
-                                                      , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field})) / #{rule.margin}) ) "
-        else
-          rule_cond += ", 100/#{possi_rules.length} * (IF(to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} < 0 
-                                                      , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} * -1
-                                                      , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field}) / from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) ) "
-        end
+          if rule.margin == 0
+            rule_cond += ", 0) "
+          elsif rule.data_type == "date"
+            rule_cond += ", 100/#{possi_rules.length} * (IF(DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} < 0
+                                                        , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} * -1
+                                                        , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field})) / #{rule.margin}) ) "
+          else
+            rule_cond += ", 100/#{possi_rules.length} * (IF(to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} < 0 
+                                                        , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} * -1
+                                                        , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field}) / from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) ) "
+          end
 
-        if self.possi_rules.length > 1 && idx != self.possi_rules.length-1
-          rule_cond += " + "
-        else
-          rule_cond += " as score "
-        end
+          if self.possi_rules.length > 1 && idx != self.possi_rules.length-1
+            rule_cond += " + "
+          else
+            rule_cond += " as score "
+          end
 
-        rule_fields_cond += " or " if idx != 0
+          rule_fields_cond += " or " if idx != 0
 
-        rule_fields += ", from_in.#{rule.from_source_field} "
-        
-        if rule.data_type == "date"
-          rule_fields_cond += " (to_source.#{rule.to_source_field} >= DATE_ADD(from_source.#{rule.from_source_field},interval (-1 * #{rule.margin}) day) 
-                                    and to_source.#{rule.to_source_field} <= DATE_ADD(from_source.#{rule.from_source_field},interval #{rule.margin} day)) "
+          rule_fields += ", from_in.#{rule.from_source_field} "
           
-        else
-          rule_fields_cond += " (to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} - (from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) 
-                                    and to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} + (from_source.#{rule.from_source_field} * (#{rule.margin} / 100)))) "
-        end    
+          if rule.data_type == "date"
+            rule_fields_cond += " (to_source.#{rule.to_source_field} >= DATE_ADD(from_source.#{rule.from_source_field},interval (-1 * #{rule.margin}) day) 
+                                      and to_source.#{rule.to_source_field} <= DATE_ADD(from_source.#{rule.from_source_field},interval #{rule.margin} day)) "
+            
+          else
+            rule_fields_cond += " (to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} - (from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) 
+                                      and to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} + (from_source.#{rule.from_source_field} * (#{rule.margin} / 100)))) "
+          end    
+        end
+        query += rule_cond
+
+        from_cond = "from #{self.class.group_class.to_s.tableize} gkey
+                left join #{self.class.to_class.to_s.tableize} to_source on to_source.#{self.class.group_key} = gkey.id
+                left join (select from_in.id, from_in.#{self.class.group_key} "
+        
+        from_cond += rule_fields
+
+        from_cond += "from #{self.class.from_class.to_s.tableize} from_in
+                            where from_in.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id}) from_source on from_source.#{self.class.group_key} = to_source.#{self.class.group_key}
+                where gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} and "
+        from_cond += rule_fields_cond
+        
+        order_cond = " order_by (from_source_id, to_source_id, score DESC)"
+        query = "#{query} #{from_cond} #{order_cond}"
+        ActiveRecord::Base.connection.execute(query)
+      else
+        return "Rules have not been registered, please register at least 1 rule."
       end
-      query += rule_cond
-
-      from_cond = "from #{self.class.group_class.to_s.tableize} gkey
-              left join #{self.class.to_class.to_s.tableize} to_source on to_source.#{self.class.group_key} = gkey.id
-              left join (select from_in.id, from_in.#{self.class.group_key} "
-      
-      from_cond += rule_fields
-
-      from_cond += "from #{self.class.from_class.to_s.tableize} from_in
-                          where from_in.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id}) from_source on from_source.#{self.class.group_key} = to_source.#{self.class.group_key}
-              where gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} and "
-      from_cond += rule_fields_cond
-      
-      order_cond = " order_by (from_source_id, to_source_id, score DESC)"
-      query = "#{query} #{from_cond} #{order_cond}"
-      ActiveRecord::Base.connection.execute(query)
     end
 
     def self.create_default_resource
