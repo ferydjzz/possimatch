@@ -6,7 +6,7 @@ class CreatePossiRules < ActiveRecord::Migration
       t.string   :to_source_field
       t.string   :data_type
       t.decimal  :margin
-      t.timestamps
+      t.timestamps null: false
     end
   end
 

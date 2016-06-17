@@ -5,7 +5,7 @@ class CreatePossiMatches < ActiveRecord::Migration
       t.integer  :from_source_id
       t.integer  :to_source_id
       t.decimal  :score
-      t.timestamps
+      t.timestamps null: false
     end
     add_index :possi_matches, [:source_id, :from_source_id, :to_source_id, :score], name: "idx_possi_matches"
   end
