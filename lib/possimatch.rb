@@ -10,7 +10,6 @@ module Possimatch
   # == default value for confirguration
   extend Configuration
   define_setting :possible_matches, 3
-  define_setting :stop_after_match, false
 
   class << self
     def self.create_default_resource
