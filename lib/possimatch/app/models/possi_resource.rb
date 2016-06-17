@@ -65,7 +65,7 @@ module Possimatch
                 where gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} and "
         from_cond += rule_fields_cond
         
-        order_cond = " order_by (from_source_id, to_source_id, score DESC)"
+        order_cond = " order by from_source_id, to_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"
         ActiveRecord::Base.connection.execute(query)
       else
