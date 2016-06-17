@@ -12,13 +12,13 @@ module Possimatch
   define_setting :possible_matches, 3
 
   class << self
-    def self.create_default_resource
+    def create_default_resource
       PossiResource.descendants.each do |resource|
         resource.create_default_resource
       end
     end
 
-    def self.start_matching
+    def start_matching
       PossiResource.descendants.each do |resources|
         resources.each do |resource|
           result = resource.get_all_matches_data
@@ -27,5 +27,4 @@ module Possimatch
       end
     end
   end
-
 end
