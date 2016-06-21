@@ -9,7 +9,15 @@ module Possimatch
 
     before_validation :sanitize_parameters
 
-    def get_all_matches_data
+    def self.start_matching
+      self.all.each do |resource|
+        result = resource.get_all_matches_data
+      end
+      
+      result.group_by{|a|a[0]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+    end
+
+    def get_all_matches_data(specific_key=nil)
       if self.possi_rules.present?
         query = "select from_source.id as from_source_id, 
                         to_source.id   as to_source_id, "
@@ -64,6 +72,9 @@ module Possimatch
                             where from_in.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id}) from_source on from_source.#{self.class.group_key} = to_source.#{self.class.group_key}
                 where gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} and "
         from_cond += rule_fields_cond
+        if specific_key.present?
+          from_cond += " and from_source.#{self.class.group_key} = #{specific_key}"
+        end
         
         order_cond = " order by from_source_id, to_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"

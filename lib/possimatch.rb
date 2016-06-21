@@ -12,13 +12,5 @@ module Possimatch
   define_setting :possible_matches, 3
 
   class << self
-    def start_matching
-      PossiResource.descendants.each do |resources|
-        resources.all.each do |resource|
-          result = resource.get_all_matches_data
-          result.group_by{ |a| a["from_source_id"] }
-        end 
-      end
-    end
   end
 end
