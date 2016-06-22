@@ -11,7 +11,7 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
 #   <%= @boilerplate.get_class_name %>.create(source_id: self.id)
 # end
 #
-# has_one :<%= "#{@boilerplate.get_file_name}" %>, foreign_key: 'source_id'
+# has_one :<%= "#{class_name.tableize.singularize}" %>, foreign_key: 'source_id'
 #
 # == automatic create default rules when resource created
 # callback to create default rules, You can create multiple rules by
