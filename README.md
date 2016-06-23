@@ -45,6 +45,7 @@ rails g possimatch:resource(class_name, from_class, to_class, group_key)
 
 	rails g possimatch:resource company customer vendor company_id
 
+	
 	class_name => we use company as our resource
 	from_class => we want to match from customers data
 	to_class   => to vendors data
@@ -61,8 +62,10 @@ After we get the model PossiCompany, next thing to do is create default resource
 	rails console
 
 After get into rails console, all we need to do is type these line to create the default resources and it will create the resources into table possi_resources for each companies.
-	
+
+```ruby
 	> PossiCompany.create_default_resource
+```
 
 *NOTE*
 
