@@ -45,10 +45,10 @@ rails g possimatch:resource(class_name, from_class, to_class, group_key)
 
 	rails g possimatch:resource company customer vendor company_id
 
-class_name => we use company as our resource
-from_class => we want to match from customers data
-to_class   => to vendors data
-group_key  => key that belongs to customer and vendor as the group key
+	class_name => we use company as our resource
+	from_class => we want to match from customers data
+	to_class   => to vendors data
+	group_key  => key that belongs to customer and vendor as the group key
 
 It will generate 2 files:
 
@@ -70,12 +70,14 @@ After get into rails console, all we need to do is type these line to create the
 
 To run the matching system, we need to setup at least 1 rule. for example: we want to match the customer's balance with vendor's balance.
 
-	> PossiCompany.create_default_rule('height', 'height', 'decimal', 0)
+```ruby
+> PossiCompany.create_default_rule('height', 'height', 'decimal', 0)
+```
 
-from_source_field 	=> 'height' field name in customers table
-to_source_field		=> 'height' field name in vendors tables
-data_type			=> 'decimal'
-margin				=> 0 (error margin 0 = must match 100%, 10 = height +- 10)
+	from_source_field 	=> 'height' field name in customers table
+	to_source_field		=> 'height' field name in vendors tables
+	data_type			=> 'decimal'
+	margin				=> 0 (error margin 0 = must match 100%, 10 = height +- 10)
 
 ## Development
 
