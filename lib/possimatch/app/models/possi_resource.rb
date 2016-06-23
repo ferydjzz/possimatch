@@ -24,7 +24,8 @@ module Possimatch
 
     def get_all_matches_data(specific_key=nil)
       if self.possi_rules.present?
-        query = "select from_source.id as from_source_id, 
+        query = "select from_source.#{self.class.group_key},
+                        from_source.id as from_source_id, 
                         to_source.id   as to_source_id, "
         rule_cond = ""
         rule_fields = "" 
