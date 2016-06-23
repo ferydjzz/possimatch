@@ -14,12 +14,12 @@ module Possimatch
         result = resource.get_all_matches_data
       end
       
-      result.group_by{|a|a[0]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+      result.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
     end
 
     def start_matching
       result = sefl.get_all_matches_data
-      result.group_by{|a|a[0]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+      result.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
     end
 
     def get_all_matches_data(specific_key=nil)
