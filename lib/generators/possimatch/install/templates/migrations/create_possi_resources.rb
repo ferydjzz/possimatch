@@ -5,6 +5,7 @@ class CreatePossiResources < ActiveRecord::Migration
       t.string   :from_source
       t.string   :to_source
       t.string   :group_key
+      t.integer  :minimal_percentage, default: nil
       t.timestamps null: false
     end
   end
