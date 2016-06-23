@@ -24,9 +24,9 @@ module Possimatch
         query = "insert into possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) values "
         result.each_with_index do |data, idx|
           if idx == 0
-            query += " ('#{data.join("', '")}')"
+            query += " ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
           else
-            query += ", ('#{data.join("', '")}')"
+            query += ", ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
           end
         end
 
