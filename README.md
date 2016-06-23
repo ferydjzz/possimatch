@@ -65,11 +65,12 @@ After get into rails console, all we need to do is type these line to create the
 	> PossiCompany.create_default_resource
 
 *NOTE*
+
 *for now, can only match data with type date/decimal*
 
 To run the matching system, we need to setup at least 1 rule. for example: we want to match the customer's balance with vendor's balance.
 
-	> PossiCompany.create_default_rule(from_source_field, to_source_field, data_type, margin)
+	> PossiCompany.create_default_rule('height', 'height', 'decimal', 0)
 
 from_source_field 	=> 'height' field name in customers table
 to_source_field		=> 'height' field name in vendors tables
