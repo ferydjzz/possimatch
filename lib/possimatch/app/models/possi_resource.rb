@@ -18,7 +18,7 @@ module Possimatch
     end
 
     def start_matching
-      result = sefl.get_all_matches_data
+      result = self.get_all_matches_data
       result.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
     end
 
