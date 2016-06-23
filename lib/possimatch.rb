@@ -10,7 +10,8 @@ module Possimatch
   # == default value for confirguration
   extend Configuration
   define_setting :possible_matches, 3
-
+  define_setting :minimal_percentage, 100
+  
   class << self
   end
 end
