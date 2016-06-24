@@ -8,6 +8,7 @@ class CreatePossiMatches < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :possi_matches, [:source_id, :from_source_id, :to_source_id, :score], name: "idx_possi_matches"
+    add_index :possi_matches, [:source_id, :from_source_id, :to_source_id], uniq: true, name: "idx_uniq_possi_matches"
   end
 
   def self.down
