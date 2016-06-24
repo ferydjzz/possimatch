@@ -19,18 +19,19 @@ module Possimatch
 
     def start_matching(specific_key=nil, insert_into_db=false)
       result = self.get_all_matches_data(specific_key)
-      result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
-      if insert_into_db == true && result.length > 0
-        query = "insert into possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) values "
-        result.each_with_index do |data, idx|
-          if idx == 0
-            query += " ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
-          else
-            query += ", ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
+      if result.class == Mysql2::Result
+        result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+        if insert_into_db == true && result.length > 0
+          query = "insert into possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) values "
+          result.each_with_index do |data, idx|
+            if idx == 0
+              query += " ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
+            else
+              query += ", ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
+            end
           end
+          ActiveRecord::Base.connection.execute(query)
         end
-
-        ActiveRecord::Base.connection.execute(query)
       end
       result
     end
