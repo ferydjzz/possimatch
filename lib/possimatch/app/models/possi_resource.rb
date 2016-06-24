@@ -22,7 +22,7 @@ module Possimatch
       if result.class == Mysql2::Result
         result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
         if insert_into_db == true && result.length > 0
-          query = "insert into possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) values "
+          query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
           result.each_with_index do |data, idx|
             if idx == 0
               query += " ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
@@ -30,6 +30,10 @@ module Possimatch
               query += ", ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
             end
           end
+          query += "ON DUPLICATE KEY UPDATE 
+                          score = VALUES(score), 
+                          created_at = VALUES(created_at),
+                          updated_at = VALUES(updated_at)"
           ActiveRecord::Base.connection.execute(query)
         end
       end
@@ -38,15 +42,15 @@ module Possimatch
 
     def get_all_matches_data(specific_key=nil)
       if self.possi_rules.present?
-        query = "select from_source.#{self.class.group_key},
-                        from_source.id as from_source_id, 
-                        to_source.id   as to_source_id, "
+        query = "SELECT from_source.#{self.class.group_key},
+                        from_source.id AS from_source_id, 
+                        to_source.id   AS to_source_id, "
         rule_cond = ""
         rule_fields = "" 
         rule_fields_cond = ""
 
         self.possi_rules.each_with_index do |rule, idx|
-          rule_cond += " if(from_source.#{rule.from_source_field} = to_source.#{rule.to_source_field}
+          rule_cond += " IF(from_source.#{rule.from_source_field} = to_source.#{rule.to_source_field}
                           , 100/#{possi_rules.length}"
 
           if rule.margin == 0
@@ -64,39 +68,39 @@ module Possimatch
           if self.possi_rules.length > 1 && idx != self.possi_rules.length-1
             rule_cond += " + "
           else
-            rule_cond += " as score "
+            rule_cond += " AS score "
           end
 
-          rule_fields_cond += " or " if idx != 0
+          rule_fields_cond += " OR " if idx != 0
 
           rule_fields += ", from_in.#{rule.from_source_field} "
           
           if rule.data_type == "date"
             rule_fields_cond += " (to_source.#{rule.to_source_field} >= DATE_ADD(from_source.#{rule.from_source_field},interval (-1 * #{rule.margin}) day) 
-                                      and to_source.#{rule.to_source_field} <= DATE_ADD(from_source.#{rule.from_source_field},interval #{rule.margin} day)) "
+                                      AND to_source.#{rule.to_source_field} <= DATE_ADD(from_source.#{rule.from_source_field},interval #{rule.margin} day)) "
             
           else
             rule_fields_cond += " (to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} - (from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) 
-                                      and to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} + (from_source.#{rule.from_source_field} * (#{rule.margin} / 100)))) "
+                                      AND to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} + (from_source.#{rule.from_source_field} * (#{rule.margin} / 100)))) "
           end    
         end
         query += rule_cond
 
-        from_cond = "from #{self.class.group_class.to_s.tableize} gkey
-                left join #{self.class.to_class.to_s.tableize} to_source on to_source.#{self.class.group_key} = gkey.id
-                left join (select from_in.id, from_in.#{self.class.group_key} "
+        from_cond = "FROM #{self.class.group_class.to_s.tableize} gkey
+                LEFT JOIN #{self.class.to_class.to_s.tableize} to_source ON to_source.#{self.class.group_key} = gkey.id
+                LEFT JOIN (select from_in.id, from_in.#{self.class.group_key} "
         
         from_cond += rule_fields
 
-        from_cond += "from #{self.class.from_class.to_s.tableize} from_in
-                            where from_in.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id}) from_source on from_source.#{self.class.group_key} = to_source.#{self.class.group_key}
-                where gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} and "
+        from_cond += "FROM #{self.class.from_class.to_s.tableize} from_in
+                            WHERE from_in.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id}) from_source ON from_source.#{self.class.group_key} = to_source.#{self.class.group_key}
+                WHERE gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} AND "
         from_cond += " ( #{rule_fields_cond} ) "
         if specific_key.present?
-          from_cond += " and from_source.#{self.class.group_key} = #{specific_key}"
+          from_cond += " AND from_source.#{self.class.group_key} = #{specific_key}"
         end
         
-        order_cond = " order by from_source_id, to_source_id, score DESC"
+        order_cond = " ORDER BY from_source_id, to_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"
         ActiveRecord::Base.connection.execute(query)
       else
