@@ -9,18 +9,18 @@ module Possimatch
 
     before_validation :sanitize_parameters
 
-    def self.start_matching
+    def self.start_matching(specific_key=nil, insert_into_db=false)
+      result = []
       self.all.each do |resource|
-        result = resource.get_all_matches_data
+        result << resource.start_matching(specific_key, insert_into_db)
       end
-      
-      result.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+      result
     end
 
-    def start_matching(specific_key=nil, insert_to_db=false)
+    def start_matching(specific_key=nil, insert_into_db=false)
       result = self.get_all_matches_data(specific_key)
       result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
-      if insert_to_db == true && result.length > 0
+      if insert_into_db == true && result.length > 0
         query = "insert into possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) values "
         result.each_with_index do |data, idx|
           if idx == 0
