@@ -97,8 +97,11 @@ module Possimatch
                 WHERE gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} AND "
         from_cond += " ( #{rule_fields_cond} ) "
         if specific_key.present?
-          from_cond += " AND from_source.#{self.class.group_key} = #{specific_key}"
+          from_cond += " AND from_source.#{self.class.group_key} = #{specific_key} "
         end
+
+        from_cond += " AND from_source.id NOT IN (#{exclude_ids_from_source}) " if exclude_ids_from_source.present?
+        from_cond += " AND to_source.id NOT IN (#{exclude_ids_to_source}) " if exclude_ids_to_source.present?
         
         order_cond = " ORDER BY from_source_id, to_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"
@@ -218,5 +221,12 @@ module Possimatch
       end
       true
     end
+
+    def exclude_ids_from_source
+      []
+    end
+
+    def exclude_ids_to_source
+      []
   end
 end
