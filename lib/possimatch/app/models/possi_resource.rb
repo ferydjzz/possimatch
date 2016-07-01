@@ -228,5 +228,6 @@ module Possimatch
 
     def exclude_ids_to_source
       []
+    end
   end
 end

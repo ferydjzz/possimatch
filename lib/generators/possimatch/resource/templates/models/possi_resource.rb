@@ -43,4 +43,14 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
   def self.group_key
     "<%= @group_key.to_s %>"
   end
+
+  private
+
+  def exclude_ids_from_source
+    []
+  end
+
+  def exclude_ids_to_source
+    []
+  end
 end
