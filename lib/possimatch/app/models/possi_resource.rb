@@ -188,7 +188,7 @@ module Possimatch
       if self.possi_rules.present?
         all_rules = self.possi_rules
       elsif PossiRule.system_rules.present?
-        all_rules = self.possi_rules
+        all_rules = PossiRule.system_rules
       end
       all_rules
     end 
