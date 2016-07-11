@@ -138,7 +138,7 @@ module Possimatch
 
       # data = self.pluck(:id).map{|a|[a, from_source_field, to_source_field, data_type, margin, Time.now.strftime("%F %T"), Time.now.strftime("%F %T")]}
       query = "INSERT INTO possi_rules (possi_resource_id, from_source_field, to_source_field, data_type, margin, system, created_at, updated_at) VALUES "
-      values = "(0, #{from_source_field}, #{to_source_field}, #{data_type}, #{margin}, #{true}, #{Time.now.strftime("%F %T")}, #{Time.now.strftime("%F %T")})"
+      values = "(0, #{from_source_field}, #{to_source_field}, #{data_type}, #{margin}, #{true}, '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
 
       # data.each do |d|
       #   if values.blank?
