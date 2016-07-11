@@ -62,9 +62,9 @@ module Possimatch
                                                         , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} * -1
                                                         , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field})) / #{rule.margin}) ) "
           else
-            rule_cond += ", 100/#{all_rules.length} * (IF(to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} < 0 
-                                                        , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} * -1
-                                                        , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field}) / from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) ) "
+            rule_cond += ", 100/#{all_rules.length} * (IF(IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0) < 0 
+                                                        , IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0) * -1
+                                                        , IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0) / IFNULL(from_source.#{rule.from_source_field},0) * (#{rule.margin} / 100))) ) "
           end
 
           if all_rules.length > 1 && idx != all_rules.length-1
@@ -82,8 +82,8 @@ module Possimatch
                                       AND to_source.#{rule.to_source_field} <= DATE_ADD(from_source.#{rule.from_source_field},interval #{rule.margin} day)) "
             
           else
-            rule_fields_cond += " (to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} - (from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) 
-                                      AND to_source.#{rule.to_source_field} >= (from_source.#{rule.from_source_field} + (from_source.#{rule.from_source_field} * (#{rule.margin} / 100)))) "
+            rule_fields_cond += " (IFNULL(to_source.#{rule.to_source_field},0) >= (IFNULL(from_source.#{rule.from_source_field},0) - (IFNULL(from_source.#{rule.from_source_field},0) * (#{rule.margin} / 100))) 
+                                      AND IFNULL(to_source.#{rule.to_source_field},0) >= (IFNULL(from_source.#{rule.from_source_field},0) + (IFNULL(from_source.#{rule.from_source_field},0) * (#{rule.margin} / 100)))) "
           end    
         end
         query += rule_cond
