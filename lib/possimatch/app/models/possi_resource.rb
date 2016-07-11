@@ -41,7 +41,9 @@ module Possimatch
     end
 
     def get_all_matches_data(specific_key=nil)
-      if self.possi_rules.present?
+      all_rules = get_all_rules
+
+      if all_rules.present?
         query = "SELECT from_source.#{self.class.group_key},
                         from_source.id AS from_source_id, 
                         to_source.id   AS to_source_id, "
@@ -49,23 +51,23 @@ module Possimatch
         rule_fields = "" 
         rule_fields_cond = ""
 
-        self.possi_rules.each_with_index do |rule, idx|
+        all_rules.each_with_index do |rule, idx|
           rule_cond += " IF(from_source.#{rule.from_source_field} = to_source.#{rule.to_source_field}
-                          , 100/#{possi_rules.length}"
+                          , 100/#{all_rules.length}"
 
           if rule.margin == 0
             rule_cond += ", 0) "
           elsif rule.data_type == "date"
-            rule_cond += ", 100/#{possi_rules.length} * (IF(DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} < 0
+            rule_cond += ", 100/#{all_rules.length} * (IF(DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} < 0
                                                         , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} * -1
                                                         , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field})) / #{rule.margin}) ) "
           else
-            rule_cond += ", 100/#{possi_rules.length} * (IF(to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} < 0 
+            rule_cond += ", 100/#{all_rules.length} * (IF(to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} < 0 
                                                         , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field} * -1
                                                         , to_source.#{rule.to_source_field} - from_source.#{rule.from_source_field}) / from_source.#{rule.from_source_field} * (#{rule.margin} / 100))) ) "
           end
 
-          if self.possi_rules.length > 1 && idx != self.possi_rules.length-1
+          if all_rules.length > 1 && idx != all_rules.length-1
             rule_cond += " + "
           else
             rule_cond += " AS score "
@@ -134,17 +136,17 @@ module Possimatch
       check_field(from_source_field, self.from_class)
       check_field(to_source_field, self.to_class)
 
-      data = self.pluck(:id).map{|a|[a, from_source_field, to_source_field, data_type, margin, Time.now.strftime("%F %T"), Time.now.strftime("%F %T")]}
-      query = "INSERT INTO possi_rules (possi_resource_id, from_source_field, to_source_field, data_type, margin, created_at, updated_at) VALUES "
-      values = ""
+      # data = self.pluck(:id).map{|a|[a, from_source_field, to_source_field, data_type, margin, Time.now.strftime("%F %T"), Time.now.strftime("%F %T")]}
+      query = "INSERT INTO possi_rules (possi_resource_id, from_source_field, to_source_field, data_type, margin, system, created_at, updated_at) VALUES "
+      values = "(0, #{from_source_field}, #{to_source_field}, #{data_type}, #{margin}, #{true}, Time.now.strftime('%F %T'), Time.now.strftime('%F %T'))"
 
-      data.each do |d|
-        if values.blank?
-          values += " ('#{d.join("', '")}')"
-        else
-          values += ", ('#{d.join("', '")}')"
-        end
-      end
+      # data.each do |d|
+      #   if values.blank?
+      #     values += " ('#{d.join("', '")}')"
+      #   else
+      #     values += ", ('#{d.join("', '")}')"
+      #   end
+      # end
 
       query = "#{query} #{values}"
       ActiveRecord::Base.connection.execute(query)
@@ -180,6 +182,16 @@ module Possimatch
 
     # ============= Private ============= #
     private 
+    
+    def get_all_rules
+      all_rules = nil
+      if self.possi_rules.present?
+        all_rules = self.possi_rules
+      elsif PossiRule.system_rules.present?
+        all_rules = self.possi_rules
+      end
+      all_rules
+    end 
 
     def sanitize_parameters
       self.from_source ||= self.class.from_class.to_s

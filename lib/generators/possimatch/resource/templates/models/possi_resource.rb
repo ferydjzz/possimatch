@@ -15,7 +15,8 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
 #
 # == automatic create default rules when resource created
 # callback to create default rules, You can create multiple rules by
-# multiplying create_rule function
+# multiplying create_rule function 
+# or You can use the default system rules
 #
 # after_create :create_possi_rules
 # 
