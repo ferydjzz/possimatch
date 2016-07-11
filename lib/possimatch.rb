@@ -11,6 +11,7 @@ module Possimatch
   extend Configuration
   define_setting :possible_matches, 3
   define_setting :minimal_score, 30
+  define_setting :skip_non_100_percent, false
   
   class << self
   end

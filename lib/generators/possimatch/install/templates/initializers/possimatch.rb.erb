@@ -11,7 +11,15 @@ Possimatch.configuration do |config|
   #
   # Set the minimal score to be inserted to possi_matches table
   #
-  #config.minimal_score = 100
+  config.minimal_score = 60
   #
-
+  # == Skip non 100% matches data
+  #
+  # If have multiple matches data (score), let's say 90%, 95%, 100% and 100%,
+  # by default, the system will insert all data into database.
+  # If set to true, it will only get data with 100% only, but if there's no 100% data,
+  # it will insert all data based on the initializer (default: top 3).
+  #
+  #config.skip_non_100_percent = true
+  #
 end
