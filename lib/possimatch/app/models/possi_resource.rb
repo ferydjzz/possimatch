@@ -52,8 +52,13 @@ module Possimatch
         rule_fields_cond = ""
 
         all_rules.each_with_index do |rule, idx|
-          rule_cond += " IF(from_source.#{rule.from_source_field} = to_source.#{rule.to_source_field}
+          if rule.data_type == "decimal"
+            rule_cond += " IF(IFNULL(from_source.#{rule.from_source_field},0) = IFNULL(to_source.#{rule.to_source_field},0)
                           , 100/#{all_rules.length}"
+          else
+            rule_cond += " IF(from_source.#{rule.from_source_field} = to_source.#{rule.to_source_field}
+                          , 100/#{all_rules.length}"
+          end
 
           if rule.margin == 0
             rule_cond += ", 0) "
