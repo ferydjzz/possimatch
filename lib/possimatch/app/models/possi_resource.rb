@@ -107,7 +107,7 @@ module Possimatch
         from_cond += "FROM #{self.class.from_class.to_s.tableize} from_in
                             WHERE from_in.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id}) from_source ON from_source.#{self.class.group_key} = to_source.#{self.class.group_key}
                 WHERE gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} AND 
-                from_source.#{self.class.group_key} IS NOT NULL "
+                from_source.#{self.class.group_key} IS NOT NULL AND "
         from_cond += " ( #{rule_fields_cond} ) "
 
         if specific_key.present?
