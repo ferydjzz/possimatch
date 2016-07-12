@@ -20,7 +20,12 @@ module Possimatch
     def start_matching(specific_key=nil, insert_into_db=false)
       result = self.get_all_matches_data(specific_key)
       if result.class == Mysql2::Result
-        result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+        # result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+
+        result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}
+        result = result.flat_map{|a|a.last.reject{ |b| b.last.to_f < 100 if a.last.first.last.to_f == 100}}.group_by{|a|a[1]} if Possimatch.skip_non_100_percent == true
+        result = result.flat_map{|a|a.last.max_by(Possimatch.possible_matches, &:first)}
+
         if insert_into_db == true && result.length > 0
           query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
           result.each_with_index do |data, idx|
