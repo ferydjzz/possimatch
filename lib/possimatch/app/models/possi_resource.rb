@@ -20,11 +20,11 @@ module Possimatch
     def start_matching(specific_key=nil, insert_into_db=false)
       result = self.get_all_matches_data(specific_key)
       if result.class == Mysql2::Result
-        # result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:first)}
+        # result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:last)}
 
         result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}
         result = result.flat_map{|a|a.last.reject{ |b| b.last.to_f < 100 if a.last.first.last.to_f == 100}}.group_by{|a|a[1]} if Possimatch.skip_non_100_percent == true
-        result = result.flat_map{|a|a.last.max_by(Possimatch.possible_matches, &:first)}
+        result = result.flat_map{|a|a.last.max_by(Possimatch.possible_matches, &:last)}
 
         
 
