@@ -29,7 +29,7 @@ module Possimatch
         
 
         if insert_into_db == true && result.length > 0
-          delete_query = "DELETE FROM possi_matches where from_source_id IN (#{result.map{|a|a[1]}}.uniq)"
+          delete_query = "DELETE FROM possi_matches where from_source_id IN (#{result.map{|a|a[1]}}.uniq) AND to_source_id NOT IN (#{result.map{|a|a[2]}}.uniq)"
 
           query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
           result.each_with_index do |data, idx|
