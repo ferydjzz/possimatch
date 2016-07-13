@@ -26,7 +26,11 @@ module Possimatch
         result = result.flat_map{|a|a.last.reject{ |b| b.last.to_f < 100 if a.last.first.last.to_f == 100}}.group_by{|a|a[1]} if Possimatch.skip_non_100_percent == true
         result = result.flat_map{|a|a.last.max_by(Possimatch.possible_matches, &:first)}
 
+        
+
         if insert_into_db == true && result.length > 0
+          delete_query = "DELETE FROM possi_matches where from_source_id IN (#{result.map{|a|a[1]}}.uniq)"
+
           query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
           result.each_with_index do |data, idx|
             if idx == 0
@@ -39,6 +43,8 @@ module Possimatch
                           score = VALUES(score), 
                           created_at = VALUES(created_at),
                           updated_at = VALUES(updated_at)"
+
+          ActiveRecord::Base.connection.execute(delete_query)
           ActiveRecord::Base.connection.execute(query)
         end
       end
