@@ -150,6 +150,14 @@ module Possimatch
       ActiveRecord::Base.connection.execute(query)
     end
 
+    def create_resource
+      check_data_validation
+      self.from_source = self.from_class.to_s
+      self.to_source   = self.to_class.to_s
+      self.group_key   = self.group_key.to_s
+      self.save!
+    end
+
     def self.create_default_rule(from_source_field, to_source_field, data_type, margin)
       check_field(from_source_field, self.from_class)
       check_field(to_source_field, self.to_class)
