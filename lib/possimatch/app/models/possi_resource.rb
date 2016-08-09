@@ -151,7 +151,6 @@ module Possimatch
     end
 
     def create_resource
-      check_data_validation
       self.from_source = self.from_class.to_s
       self.to_source   = self.to_class.to_s
       self.group_key   = self.group_key.to_s
