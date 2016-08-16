@@ -120,12 +120,11 @@ module Possimatch
           from_cond += " AND from_source.#{self.class.group_key} = #{specific_group_key} "
         end
 
-        from_cond += " AND from_source.id NOT IN (#{exclude_ids_from_source.join(',')}) " if exclude_ids_from_source.present?
-        from_cond += " AND to_source.id NOT IN (#{exclude_ids_to_source.join(',')}) " if exclude_ids_to_source.present?
-
         from_cond += " AND from_source.id = #{from_source_specific_id} " if from_source_specific_id.present?
         from_cond += " AND to_source.id = #{to_source_specific_id} " if to_source_specific_id.present?
-
+        
+        from_cond += " AND from_source.id NOT IN (#{exclude_ids_from_source.join(',')}) " if exclude_ids_from_source.present?
+        from_cond += " AND to_source.id NOT IN (#{exclude_ids_to_source.join(',')}) " if exclude_ids_to_source.present?
         
         order_cond = " ORDER BY from_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"
