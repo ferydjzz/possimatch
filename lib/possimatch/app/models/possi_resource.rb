@@ -9,16 +9,16 @@ module Possimatch
 
     before_validation :sanitize_parameters
 
-    def self.start_matching(specific_key=nil, insert_into_db=false)
+    def self.start_matching(specific_group_key=nil, insert_into_db=false)
       result = []
       self.all.each do |resource|
-        result << resource.start_matching(specific_key, insert_into_db)
+        result << resource.start_matching(specific_group_key, insert_into_db)
       end
       result
     end
 
-    def start_matching(specific_key=nil, insert_into_db=false)
-      result = self.get_all_matches_data(specific_key)
+    def start_matching(specific_group_key=nil, insert_into_db=false)
+      result = self.get_all_matches_data(specific_group_key)
       if result.class == Mysql2::Result
         # result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:last)}
 
@@ -51,7 +51,7 @@ module Possimatch
       result
     end
 
-    def get_all_matches_data(specific_key=nil)
+    def get_all_matches_data(specific_group_key=nil, from_source_specific_id=nil, to_source_specific_id=nil)
       all_rules = get_all_rules
 
       if all_rules.present?
@@ -116,12 +116,16 @@ module Possimatch
                 from_source.#{self.class.group_key} IS NOT NULL AND "
         from_cond += " ( #{rule_fields_cond} ) "
 
-        if specific_key.present?
-          from_cond += " AND from_source.#{self.class.group_key} = #{specific_key} "
+        if specific_group_key.present?
+          from_cond += " AND from_source.#{self.class.group_key} = #{specific_group_key} "
         end
 
         from_cond += " AND from_source.id NOT IN (#{exclude_ids_from_source.join(',')}) " if exclude_ids_from_source.present?
         from_cond += " AND to_source.id NOT IN (#{exclude_ids_to_source.join(',')}) " if exclude_ids_to_source.present?
+
+        from_cond += " AND from_source.id = #{from_source_specific_id} " if from_source_specific_id.present?
+        from_cond += " AND to_source.id = #{to_source_specific_id} " if to_source_specific_id.present?
+
         
         order_cond = " ORDER BY from_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"
