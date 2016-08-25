@@ -25,6 +25,7 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
 # end
 #
 
+# == IMPORTANT !! DO NOT DELETE OR UPDATE THIS BLOCK ==
   def self.source_class
     <%= class_name.classify %>
   end
@@ -45,13 +46,33 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
     "<%= @group_key.to_s %>"
   end
 
+# =====================================================
+
   private
 
-  def exclude_ids_from_source(specific_id=nil)
-    []
-  end
+  # == to exclude spesific id from the mathing function ==
+  # for example if you don't want to match data that already matched,
+  # you can specify the array of id to exclude.
+  # 
+  # def exclude_ids_from_source(specific_id=nil)
+  #   []
+  # end
+  # 
+  # def exclude_ids_to_source(specific_id=nil)
+  #   []
+  # end
 
-  def exclude_ids_to_source(specific_id=nil)
-    []
-  end
+  # == specify your soft delete field if exist ==
+  # if you are using paranoia gem or your own method to mark deleted data
+  # ex: deleted_at is not null / active true please fill in this condition
+  # to get the active only (not deleted) data.
+  # 
+  # def from_source_where_conditions
+  #   "deleted_at IS NOT NULL"
+  # end
+  # 
+  # def to_source_where_conditions
+  #   "deleted_at IS NOT NULL"
+  # end
+  # 
 end

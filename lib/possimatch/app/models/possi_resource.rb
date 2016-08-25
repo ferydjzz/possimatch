@@ -126,6 +126,9 @@ module Possimatch
         from_cond += " AND from_source.id NOT IN (#{exclude_ids_from_source(specific_group_key).join(',')}) " if exclude_ids_from_source(specific_group_key).present?
         from_cond += " AND to_source.id NOT IN (#{exclude_ids_to_source(specific_group_key).join(',')}) " if exclude_ids_to_source(specific_group_key).present?
         
+        from_cond += " AND #{from_source_where_conditions} " if from_source_where_conditions.present?
+        from_cond += " AND #{to_source_where_conditions} " if to_source_where_conditions.present?
+
         order_cond = " ORDER BY from_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"
         ActiveRecord::Base.connection.execute(query)
@@ -260,6 +263,12 @@ module Possimatch
         raise NameError.new("field #{field_name} doesn't exists in #{error_data.join(' and ')}.")
       end
       true
+    end
+
+    def from_source_where_conditions
+    end
+
+    def to_source_where_conditions
     end
 
     def exclude_ids_from_source(specific_id=nil)
