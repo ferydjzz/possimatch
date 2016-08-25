@@ -67,12 +67,19 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
   # ex: deleted_at is not null / active true please fill in this condition
   # to get the active only (not deleted) data.
   # 
-  # def from_source_where_conditions
-  #   "deleted_at IS NOT NULL"
+  # def from_source_soft_delete_field
+  #   "deleted_at"
   # end
   # 
-  # def to_source_where_conditions
-  #   "deleted_at IS NOT NULL"
+  # def from_source_active_condition
+  #   "IS NOT NULL"
   # end
   # 
+  # def to_source_soft_delete_field
+  #   "active"
+  # end
+  # 
+  # def to_source_active_condition
+  #   "= true"
+  # end
 end

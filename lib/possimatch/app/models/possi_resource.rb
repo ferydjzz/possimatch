@@ -110,6 +110,7 @@ module Possimatch
         
         from_cond += rule_fields
 
+        from_cond += ", from_in.#{from_source_soft_delete_field} "
         from_cond += "FROM #{self.class.from_class.to_s.tableize} from_in
                             WHERE from_in.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id}) from_source ON from_source.#{self.class.group_key} = to_source.#{self.class.group_key}
                 WHERE gkey.#{self.class.source_class.to_s.tableize.singularize}_id = #{self.source_id} AND 
@@ -126,8 +127,8 @@ module Possimatch
         from_cond += " AND from_source.id NOT IN (#{exclude_ids_from_source(specific_group_key).join(',')}) " if exclude_ids_from_source(specific_group_key).present?
         from_cond += " AND to_source.id NOT IN (#{exclude_ids_to_source(specific_group_key).join(',')}) " if exclude_ids_to_source(specific_group_key).present?
         
-        from_cond += " AND #{from_source_where_conditions} " if from_source_where_conditions.present?
-        from_cond += " AND #{to_source_where_conditions} " if to_source_where_conditions.present?
+        from_cond += " AND from_source.#{from_source_soft_delete_field} #{from_source_active_condition}" if from_source_soft_delete_field.present? && from_source_active_condition.present?
+        from_cond += " AND to_source.#{to_source_where_conditions} #{to_source_active_condition}" if to_source_soft_delete_field.present? && to_source_active_condition.present?
 
         order_cond = " ORDER BY from_source_id, score DESC"
         query = "#{query} #{from_cond} #{order_cond}"
@@ -265,10 +266,16 @@ module Possimatch
       true
     end
 
-    def from_source_where_conditions
+    def from_source_soft_delete_field 
     end
 
-    def to_source_where_conditions
+    def from_source_active_condition
+    end
+
+    def to_source_soft_delete_field 
+    end
+    
+    def to_source_active_condition
     end
 
     def exclude_ids_from_source(specific_id=nil)
