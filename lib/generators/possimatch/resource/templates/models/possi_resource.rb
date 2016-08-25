@@ -47,11 +47,11 @@ class <%= @boilerplate.get_class_name %> < Possimatch::PossiResource
 
   private
 
-  def exclude_ids_from_source
+  def exclude_ids_from_source(specific_id=nil)
     []
   end
 
-  def exclude_ids_to_source
+  def exclude_ids_to_source(specific_id=nil)
     []
   end
 end
