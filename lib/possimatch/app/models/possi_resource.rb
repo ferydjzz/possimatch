@@ -130,7 +130,7 @@ module Possimatch
         from_cond += " AND from_source.#{from_source_soft_delete_field} #{from_source_active_condition}" if from_source_soft_delete_field.present? && from_source_active_condition.present?
         from_cond += " AND to_source.#{to_source_where_conditions} #{to_source_active_condition}" if to_source_soft_delete_field.present? && to_source_active_condition.present?
 
-        order_cond = " ORDER BY from_source_id, score DESC"
+        order_cond = " ORDER BY score DESC, from_source_id, to_source_id"
         query = "#{query} #{from_cond} #{order_cond}"
         ActiveRecord::Base.connection.execute(query)
       else
