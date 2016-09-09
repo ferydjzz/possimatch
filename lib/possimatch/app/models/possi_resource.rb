@@ -53,7 +53,6 @@ module Possimatch
 
     def get_all_matches_data(specific_group_key=nil, from_source_specific_id=nil, to_source_specific_id=nil)
       all_rules = get_all_rules
-
       if all_rules.present?
         query = "SELECT from_source.#{self.class.group_key},
                         from_source.id AS from_source_id, 
@@ -74,13 +73,12 @@ module Possimatch
           if rule.margin == 0
             rule_cond += ", 0) "
           elsif rule.data_type == "date"
-            rule_cond += ", 100/#{all_rules.length} * (IF(DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} < 0
-                                                        , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field} * -1
-                                                        , DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field})) / #{rule.margin}) ) "
+            # IF COMPARE TYPE IS DATE AND MORE THAN MARGIN THAN THE SCORE IS 0, ELSE GET THE PROPORTION OF THE RANGE
+            rule_cond += ", 100/#{all_rules.length} * IF(ABS(DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field})) > #{rule.margin}, 0, 
+                                                        (1 / ( #{rule.margin} * ABS(DATEDIFF(to_source.#{rule.to_source_field}, from_source.#{rule.from_source_field})))))) "
           else
-            rule_cond += ", 100/#{all_rules.length} * (IF(IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0) < 0 
-                                                        , IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0) * -1
-                                                        , IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0) / IFNULL(from_source.#{rule.from_source_field},0) * (#{rule.margin} / 100))) ) "
+            rule_cond += ", 100/#{all_rules.length} * IF(ABS(IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0)) > #{rule.margin}, 0, 
+                                                        (#{rule.margin} - ABS(IFNULL(to_source.#{rule.to_source_field},0) - IFNULL(from_source.#{rule.from_source_field},0))) / #{rule.margin} )) "
           end
 
           if all_rules.length > 1 && idx != all_rules.length-1
@@ -99,7 +97,7 @@ module Possimatch
             
           else
             rule_fields_cond += " (IFNULL(to_source.#{rule.to_source_field},0) >= (IFNULL(from_source.#{rule.from_source_field},0) - (IFNULL(from_source.#{rule.from_source_field},0) * (#{rule.margin} / 100))) 
-                                      AND IFNULL(to_source.#{rule.to_source_field},0) >= (IFNULL(from_source.#{rule.from_source_field},0) + (IFNULL(from_source.#{rule.from_source_field},0) * (#{rule.margin} / 100)))) "
+                                      AND IFNULL(to_source.#{rule.to_source_field},0) <= (IFNULL(from_source.#{rule.from_source_field},0) + (IFNULL(from_source.#{rule.from_source_field},0) * (#{rule.margin} / 100)))) "
           end    
         end
         query += rule_cond
