@@ -30,9 +30,9 @@ module Possimatch
 
         if insert_into_db == true && result.length > 0
           delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
-          delete_query += "AND #{self.class.group_key} = #{specific_group_key} " if specific_group_key.present?
+          delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
           delete_query += "AND ((from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}) AND to_source_id NOT IN (#{result.map{|a|a[2]}.uniq.join(',')})) 
-                                OR from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}))"
+                                OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))"
 
           query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
           result.each_with_index do |data, idx|
