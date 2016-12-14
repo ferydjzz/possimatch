@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Ferydjzz"]
   spec.email         = ["ferydjzz@gmail.com"]
 
-  spec.summary       = %q{Get the possible matched of two collections data with the given rules.}
-  spec.description   = %q{Get the possible matched of two collections data with the given rules.}
+  spec.summary       = %q{Get the possible matched of two collections data with the given rules. (required ruby version >= 2.2.0)}
+  spec.description   = %q{Get the possible matched of two collections data with the given rules. (required ruby version >= 2.2.0)}
   spec.homepage      = "https://github.com/ferydjzz/possimatch"
   spec.license       = "MIT"
 
@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_development_dependency "ruby", "~> 2.2.0"
   spec.add_development_dependency "bundler", "~> 1.12"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
