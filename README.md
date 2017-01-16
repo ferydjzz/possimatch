@@ -85,6 +85,16 @@ data_type			=> 'decimal'
 margin				=> 0 (error margin 0 = must match 100%, 10 = height +- 10)
 ```
 
+
+*add params to delete all possi_matches and start new possi_matches
+```
+> PossiResource.start_matching(specific_group_key=nil, insert_into_db=false, start_from_nil=false)
+```
+
+default start_from_nil if false, set it to `true` to delete all possi_matches.
+	don't forget to specify specific_group_key to only delete possi_matches with specific_group_key or let it nil to delete entire possi_matches.
+
+
 ## Development
 
 Under construction

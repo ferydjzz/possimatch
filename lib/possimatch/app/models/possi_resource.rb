@@ -9,15 +9,15 @@ module Possimatch
 
     before_validation :sanitize_parameters
 
-    def self.start_matching(specific_group_key=nil, insert_into_db=false)
+    def self.start_matching(specific_group_key=nil, insert_into_db=false, start_from_nil=false)
       result = []
       self.all.each do |resource|
-        result << resource.start_matching(specific_group_key, insert_into_db)
+        result << resource.start_matching(specific_group_key, insert_into_db, start_from_nil)
       end
       result
     end
 
-    def start_matching(specific_group_key=nil, insert_into_db=false)
+    def start_matching(specific_group_key=nil, insert_into_db=false, start_from_nil=false)
       result = self.get_all_matches_data(specific_group_key)
       if result.class == Mysql2::Result
         # result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:last)}
@@ -32,7 +32,7 @@ module Possimatch
           delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
           delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
           delete_query += "AND ((from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}) AND to_source_id NOT IN (#{result.map{|a|a[2]}.uniq.join(',')})) 
-                                OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))"
+                                OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))" if !start_from_nil
 
           query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
           result.each_with_index do |data, idx|
