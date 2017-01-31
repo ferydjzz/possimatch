@@ -26,13 +26,14 @@ module Possimatch
         result = result.flat_map{|a|a.last.reject{ |b| b.last.to_f < 100 if a.last.first.last.to_f == 100}}.group_by{|a|a[1]} if Possimatch.skip_non_100_percent == true
         result = result.flat_map{|a|a.last.max_by(Possimatch.possible_matches, &:last)}
 
-        
-
-        if insert_into_db == true && result.length > 0
+        if start_from_nil
+          delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
+          delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
+        elsif insert_into_db == true && result.length > 0
           delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
           delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
           delete_query += "AND ((from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}) AND to_source_id NOT IN (#{result.map{|a|a[2]}.uniq.join(',')})) 
-                                OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))" if !start_from_nil
+                                OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))"
 
           query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
           result.each_with_index do |data, idx|
