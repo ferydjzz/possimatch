@@ -29,27 +29,30 @@ module Possimatch
         if start_from_nil
           delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
           delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
-        elsif insert_into_db == true && result.length > 0
+        else
           delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
           delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
           delete_query += "AND ((from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}) AND to_source_id NOT IN (#{result.map{|a|a[2]}.uniq.join(',')})) 
                                 OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))"
+        end
 
-          query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
-          result.each_with_index do |data, idx|
-            if idx == 0
-              query += " ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
-            else
-              query += ", ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
+        if insert_into_db
+          if result.length > 0
+            query = "INSERT INTO possi_matches (source_id, from_source_id, to_source_id, score, created_at, updated_at) VALUES "
+            result.each_with_index do |data, idx|
+              if idx == 0
+                query += " ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
+              else
+                query += ", ('#{data.join("', '")}', '#{Time.now.strftime("%F %T")}', '#{Time.now.strftime("%F %T")}')"
+              end
             end
+            query += "ON DUPLICATE KEY UPDATE 
+                            score = VALUES(score), 
+                            created_at = VALUES(created_at),
+                            updated_at = VALUES(updated_at)"
+            ActiveRecord::Base.connection.execute(query)
           end
-          query += "ON DUPLICATE KEY UPDATE 
-                          score = VALUES(score), 
-                          created_at = VALUES(created_at),
-                          updated_at = VALUES(updated_at)"
-
           ActiveRecord::Base.connection.execute(delete_query)
-          ActiveRecord::Base.connection.execute(query)
         end
       end
       result
