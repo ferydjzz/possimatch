@@ -29,11 +29,6 @@ module Possimatch
         if start_from_nil
           delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
           delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
-        else
-          delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
-          delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
-          delete_query += "AND ((from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}) AND to_source_id NOT IN (#{result.map{|a|a[2]}.uniq.join(',')})) 
-                                OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))"
         end
 
         if insert_into_db
@@ -51,6 +46,9 @@ module Possimatch
                             created_at = VALUES(created_at),
                             updated_at = VALUES(updated_at)"
             ActiveRecord::Base.connection.execute(query)
+
+            delete_query += "AND ((from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}) AND to_source_id NOT IN (#{result.map{|a|a[2]}.uniq.join(',')})) 
+                                OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))" if !start_from_nil
           end
           ActiveRecord::Base.connection.execute(delete_query)
         end
