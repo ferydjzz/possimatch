@@ -26,10 +26,8 @@ module Possimatch
         result = result.flat_map{|a|a.last.reject{ |b| b.last.to_f < 100 if a.last.first.last.to_f == 100}}.group_by{|a|a[1]} if Possimatch.skip_non_100_percent == true
         result = result.flat_map{|a|a.last.max_by(Possimatch.possible_matches, &:last)}
 
-        if start_from_nil
-          delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
-          delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
-        end
+        delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
+        delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
 
         if insert_into_db
           if result.length > 0
