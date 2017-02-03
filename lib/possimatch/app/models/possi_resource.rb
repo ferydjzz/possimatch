@@ -43,12 +43,12 @@ module Possimatch
                             score = VALUES(score), 
                             created_at = VALUES(created_at),
                             updated_at = VALUES(updated_at)"
-            ActiveRecord::Base.connection.execute(query)
 
             delete_query += "AND ((from_source_id IN (#{result.map{|a|a[1]}.uniq.join(',')}) AND to_source_id NOT IN (#{result.map{|a|a[2]}.uniq.join(',')})) 
                                 OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))" if !start_from_nil
           end
           ActiveRecord::Base.connection.execute(delete_query)
+          ActiveRecord::Base.connection.execute(query)
         end
       end
       result
