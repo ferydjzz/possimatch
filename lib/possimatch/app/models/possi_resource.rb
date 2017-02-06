@@ -50,7 +50,7 @@ module Possimatch
                                 OR from_source_id NOT IN (#{result.map{|a|a[1]}.uniq.join(',')}))" if !start_from_nil
           end
           ActiveRecord::Base.connection.execute(delete_query)
-          ActiveRecord::Base.connection.execute(query)
+          ActiveRecord::Base.connection.execute(query) if query.present?
         end
       end
       result
