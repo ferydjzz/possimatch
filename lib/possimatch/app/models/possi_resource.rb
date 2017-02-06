@@ -9,7 +9,7 @@ module Possimatch
 
     before_validation :sanitize_parameters
 
-    def self.start_matching(insert_into_db=false, start_from_nil=false, specific_group_key=nil)
+    def self.start_matching(specific_group_key, insert_into_db=false, start_from_nil=false)
       result = []
       self.all.each do |resource|
         result << resource.start_matching(specific_group_key, insert_into_db, start_from_nil)
@@ -17,7 +17,7 @@ module Possimatch
       result
     end
 
-    def start_matching(insert_into_db=false, start_from_nil=false, specific_group_key=nil)
+    def start_matching(specific_group_key, insert_into_db=false, start_from_nil=false)
       result = self.get_all_matches_data(specific_group_key)
       if result.class == Mysql2::Result
         # result = result.reject{|a|a.last < (self.minimal_score || Possimatch.minimal_score)}.group_by{|a|a[1]}.flat_map{|b|b.last.max_by(Possimatch.possible_matches, &:last)}
@@ -56,7 +56,7 @@ module Possimatch
       result
     end
 
-    def get_all_matches_data(from_source_specific_id=nil, to_source_specific_id=nil, specific_group_key=nil)
+    def get_all_matches_data(specific_group_key, from_source_specific_id=nil, to_source_specific_id=nil)
       all_rules = get_all_rules
       if all_rules.present?
         query = "SELECT from_source.#{self.class.group_key},
