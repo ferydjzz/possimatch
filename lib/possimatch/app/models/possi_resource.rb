@@ -27,7 +27,9 @@ module Possimatch
         result = result.flat_map{|a|a.last.max_by(Possimatch.possible_matches, &:last)}
 
         delete_query = "DELETE FROM possi_matches WHERE 1 = 1 "
-        delete_query += "AND source_id = #{specific_group_key} " if specific_group_key.present?
+        if specific_group_key.present?
+          delete_query += "AND source_id = #{specific_group_key} " 
+        end
 
         if insert_into_db
           if result.length > 0
